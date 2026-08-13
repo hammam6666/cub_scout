@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة الأشبال: في أعماق تاريخ الحركة الكشفية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo & Tajawal for friendly child-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        scoutGreen: '#1e5631',
+                        scoutLightGreen: '#4c9a2a',
+                        scoutYellow: '#fbc02d',
+                        scoutBrown: '#6d4c41',
+                        scoutWood: '#8d6e63',
+                        scoutBg: '#f4f9f4'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f9f4;
+            background-image: radial-gradient(#4c9a2a 0.75px, transparent 0.75px), radial-gradient(#4c9a2a 0.75px, #f4f9f4 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            user-select: none;
+        }
+
+        .bounce-slow {
+            animation: bounce 2s infinite;
+        }
+
+        .badge-glow {
+            box-shadow: 0 0 15px rgba(251, 192, 45, 0.8);
+        }
+
+        .scout-border {
+            border: 4px solid #1e5631;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e8f5e9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4c9a2a;
+            border-radius: 5px;
+        }
+
+        /* Certificate Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-scoutGreen text-white shadow-xl sticky top-0 z-50 border-b-4 border-scoutYellow">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-scoutYellow text-scoutGreen rounded-full flex items-center justify-center text-2xl shadow-inner border-2 border-white transform hover:rotate-12 transition">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-wide text-scoutYellow">رحلة الشبل الكشفي</h1>
+                    <p class="text-xs text-emerald-100 font-bold">تاريخ الحركة الكشفية المغامرة والتحدي</p>
+                </div>
+            </div>
+
+            <!-- Cub Scout Points & Badges Display -->
+            <div class="flex items-center gap-3 bg-emerald-900/80 px-4 py-2 rounded-2xl border border-emerald-600">
+                <div class="flex items-center gap-1.5" title="نقاط المغامرة">
+                    <i class="fas fa-star text-scoutYellow text-xl animate-pulse"></i>
+                    <span id="score-display" class="font-bold text-lg text-white">0</span>
+                    <span class="text-xs text-emerald-200">نقطة</span>
+                </div>
+                <div class="h-6 w-px bg-emerald-700"></div>
+                <div class="flex items-center gap-1.5" title="الأوسمة المحققة">
+                    <i class="fas fa-award text-amber-400 text-xl"></i>
+                    <span id="badges-count-display" class="font-bold text-lg text-white">0 / 4</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Journey Overall Progress Bar -->
+        <div class="w-full bg-emerald-950 h-2.5">
+            <div id="overall-progress" class="bg-scoutYellow h-2.5 transition-all duration-500 rounded-r-full" style="width: 20%;"></div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- Timeline Nav Stepper -->
+        <div class="bg-white p-4 rounded-3xl shadow-lg border-2 border-emerald-100 mb-8">
+            <p class="text-center text-xs md:text-sm text-gray-500 font-bold mb-3">خريطة طريق رحلتك التاريخية (اضغط للذهاب للمحطة)</p>
+            <div class="flex items-center justify-between relative max-w-3xl mx-auto">
+                <!-- Background Connection Line -->
+                <div class="absolute top-1/2 left-0 right-0 h-2 bg-gray-200 -translate-y-1/2 z-0 rounded"></div>
+                <div id="step-line" class="absolute top-1/2 right-0 h-2 bg-scoutLightGreen -translate-y-1/2 z-0 rounded transition-all duration-500" style="width: 0%;"></div>
+
+                <!-- Step Buttons -->
+                <button onclick="goToStation(1)" id="step-btn-1" class="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-scoutGreen text-white ring-4 ring-emerald-200 shadow-md">
+                    1
+                </button>
+                <button onclick="goToStation(2)" id="step-btn-2" class="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-gray-200 text-gray-600 shadow-md">
+                    2
+                </button>
+                <button onclick="goToStation(3)" id="step-btn-3" class="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-gray-200 text-gray-600 shadow-md">
+                    3
+                </button>
+                <button onclick="goToStation(4)" id="step-btn-4" class="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-gray-200 text-gray-600 shadow-md">
+                    4
+                </button>
+                <button onclick="goToStation(5)" id="step-btn-5" class="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-gray-200 text-gray-600 shadow-md">
+                    <i class="fas fa-trophy text-xs md:text-base"></i>
+                </button>
+            </div>
+            <div class="flex justify-between text-[10px] md:text-xs text-center font-bold text-gray-600 mt-2 px-1">
+                <span>المؤسس</span>
+                <span>براونسي 1907</span>
+                <span>عالم الأشبال 1916</span>
+                <span>الهدف والمبادئ</span>
+                <span>المكافآت</span>
+            </div>
+        </div>
+
+        <div id="station-1" class="station-card transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-emerald-600">
+                <div class="bg-gradient-to-r from-scoutGreen to-emerald-700 text-white p-6 relative overflow-hidden">
+                    <div class="absolute -left-6 -bottom-6 opacity-10 text-9xl">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span class="bg-scoutYellow text-scoutGreen font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">المحطة الأولى (1857 - 1907)</span>
+                    <h2 class="text-2xl md:text-3xl font-black">من هو مؤسس الكشافة؟ وبداية الفكرة!</h2>
+                    <p class="text-emerald-100 text-sm mt-1">تعرف على الرجل الذي غير حياة ملايين الأطفال حول العالم!</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                        <!-- Illustration Avatar -->
+                        <div class="bg-amber-50 p-6 rounded-2xl text-center border-2 border-dashed border-amber-300">
+                            <div class="w-32 h-32 mx-auto bg-scoutWood text-white rounded-full flex items-center justify-center text-6xl shadow-lg border-4 border-scoutYellow mb-3">
+                                <i class="fas fa-user-ninja"></i>
+                            </div>
+                            <h3 class="font-black text-lg text-scoutBrown">اللورد بادن باول</h3>
+                            <p class="text-xs text-gray-600 font-bold">مؤسس الحركة الكشفية العالمية</p>
+                            <span class="inline-block mt-2 bg-emerald-100 text-scoutGreen text-xs font-bold px-3 py-1 rounded-full">ولِد عام 1857م</span>
+                        </div>
+
+                        <!-- Story Content -->
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="bg-emerald-50 p-4 rounded-2xl border-r-4 border-scoutGreen">
+                                <h4 class="font-bold text-scoutGreen text-base flex items-center gap-2">
+                                    <i class="fas fa-lightbulb text-scoutYellow"></i> كيف بدأت القصة؟
+                                </h4>
+                                <p class="text-sm text-gray-700 leading-relaxed mt-1">
+                                    كان <b>بادن باول</b> ضابطاً يحب الطبيعة والمغامرة وحياة الخلاء. لاحظ أن الشباب والأطفال يحتاجون لمهارات شجاعة، واكتشاف الطبيعة، والاعتماد على النفس، ومساعدة الآخرين!
+                                </p>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-2xl border-r-4 border-amber-500">
+                                <h4 class="font-bold text-amber-800 text-base flex items-center gap-2">
+                                    <i class="fas fa-campground text-amber-600"></i> أول مخيم كشفي في التاريخ (1907)
+                                </h4>
+                                <p class="text-sm text-gray-700 leading-relaxed mt-1">
+                                    في عام <b>1907م</b>، جمع بادن باول 20 فتى وأقام معهم أول مخيم كشفي في جزيرة اسمها <b>"جزيرة براونسي"</b> في إنجلترا. هناك تعلموا نصب الخيام، إيقاد النار، وتتبع الأثر! وكانت هذه بداية ولادة الحركة الكشفية.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mini Knowledge Check for Station 1 -->
+                    <div class="bg-emerald-100/60 p-5 rounded-2xl border border-emerald-200">
+                        <h4 class="font-bold text-scoutGreen mb-3 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-scoutGreen"></i> اختبار ذكاء الشبل الكشفي:
+                        </h4>
+                        <p class="text-sm font-semibold text-gray-800 mb-3">أين أُقيم أول مخيم كشفي في التاريخ عام 1907م؟</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="q1-options">
+                            <button onclick="checkAnswer(1, 'a', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">أ) في جزيرة براونسي</button>
+                            <button onclick="checkAnswer(1, 'b', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ب) في الغابة السوداء</button>
+                            <button onclick="checkAnswer(1, 'c', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ج) في حديقة لندن</button>
+                        </div>
+                        <div id="q1-feedback" class="mt-3 text-sm font-bold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t">
+                    <span class="text-xs text-gray-500 font-bold">الخطوة 1 من 5</span>
+                    <button onclick="goToStation(2)" class="bg-scoutGreen hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-2xl shadow-lg transition flex items-center gap-2">
+                        المحطة التالية: عالم الأشبال 1916 <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="station-2" class="station-card hidden transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-emerald-600">
+                <div class="bg-gradient-to-r from-scoutGreen to-emerald-700 text-white p-6 relative overflow-hidden">
+                    <span class="bg-scoutYellow text-scoutGreen font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">المحطة الثانية (1908 - 1916)</span>
+                    <h2 class="text-2xl md:text-3xl font-black">انتشار الكشافة وتأسيس "مرحلة الأشبال"!</h2>
+                    <p class="text-emerald-100 text-sm mt-1">كيف أصبحت الكشافة خاصة بالأطفال الصغار بعمر 7 إلى 11 سنة؟</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Event 1: Scouting for Boys -->
+                        <div class="bg-amber-50 p-5 rounded-2xl border-2 border-amber-200 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-amber-500 text-white rounded-xl flex items-center justify-center text-xl font-bold">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-black text-amber-900">كتاب "الكشافة للفتيان" (1908)</h3>
+                                        <span class="text-xs text-amber-700 font-bold">بداية الانتشار العالمي</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    كتب بادن باول كتاباً رائعاً يشرح فيه المهارات والألعاب الكشفية. قرأه ملايين الأطفال والشباب وشكلوا فرقاً كشفية في كل مكان!
+                                </p>
+                            </div>
+                            <div class="mt-4 bg-white p-3 rounded-xl text-center text-xs text-amber-800 font-bold border border-amber-200">
+                                💡 اصبحت الكشافة لغة عالمية تجمع الصغار والكبار!
+                            </div>
+                        </div>
+
+                        <!-- Event 2: Cub Scouts founding 1916 -->
+                        <div class="bg-emerald-50 p-5 rounded-2xl border-2 border-emerald-200 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-scoutGreen text-white rounded-xl flex items-center justify-center text-xl font-bold">
+                                        <i class="fas fa-paw"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-black text-scoutGreen">ولادة مرحلة الأشبال (1916)</h3>
+                                        <span class="text-xs text-emerald-700 font-bold">خصيصاً للأبطال الصغار!</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    اراد الصغار (بعمر 7-11 سنة) الانضمام للكشافة، فأسس بادن باول عام <b>1916م</b> مرحلة <b>"الأشبال" (Cub Scouts)</b> واستوحى ألعابها ورموزها من قصص <b>"كتاب الأدغال" (ماوكلي والشبل الشجاع)</b>!
+                                </p>
+                            </div>
+                            <div class="mt-4 bg-white p-3 rounded-xl text-center text-xs text-emerald-800 font-bold border border-emerald-200">
+                                🐾 الشبل هو صغير الأسد، يرمز للقوة والشجاعة والتعلم!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Jungle Book Fun Card -->
+                    <div class="bg-gradient-to-r from-amber-500 to-scoutYellow p-5 rounded-2xl text-scoutBrown shadow-md flex items-center justify-between">
+                        <div class="space-y-1">
+                            <h4 class="font-black text-lg">شعار الشبل الكشفي:</h4>
+                            <p class="text-xl font-black text-scoutGreen tracking-wide">"أبذل جهدي!" (Do Your Best)</p>
+                            <p class="text-xs text-amber-900 font-bold">الشبل دائماً يسعى لتقديم أفضل ما لديه في المدرسة، والبيت، والكشافة.</p>
+                        </div>
+                        <div class="text-5xl opacity-80">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mini Quiz for Station 2 -->
+                    <div class="bg-emerald-100/60 p-5 rounded-2xl border border-emerald-200">
+                        <h4 class="font-bold text-scoutGreen mb-3 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-scoutGreen"></i> اختبار ذكاء الشبل الكشفي:
+                        </h4>
+                        <p class="text-sm font-semibold text-gray-800 mb-3">في أي عام أُسست مرحلة الأشبال رسمياً للأطفال؟</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="q2-options">
+                            <button onclick="checkAnswer(2, 'a', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">أ) عام 1900</button>
+                            <button onclick="checkAnswer(2, 'b', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ب) عام 1916</button>
+                            <button onclick="checkAnswer(2, 'c', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ج) عام 2000</button>
+                        </div>
+                        <div id="q2-feedback" class="mt-3 text-sm font-bold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t">
+                    <button onclick="goToStation(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-2xl transition text-sm">
+                        <i class="fas fa-arrow-right"></i> المحطة السابقة
+                    </button>
+                    <button onclick="goToStation(3)" class="bg-scoutGreen hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm">
+                        المحطة التالية: الهدف والمبادئ <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="station-3" class="station-card hidden transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-emerald-600">
+                <div class="bg-gradient-to-r from-scoutGreen to-emerald-700 text-white p-6 relative">
+                    <span class="bg-scoutYellow text-scoutGreen font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">المحطة الثالثة</span>
+                    <h2 class="text-2xl md:text-3xl font-black">هدف الكشافة والمبادئ الثلاثة!</h2>
+                    <p class="text-emerald-100 text-sm mt-1">لماذا نتعلم الكشافة؟ وما هي القواعد الذهبية للشبل؟</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Scout Goal Banner -->
+                    <div class="bg-emerald-600 text-white p-5 rounded-2xl shadow-md flex items-center gap-4">
+                        <div class="w-16 h-16 bg-scoutYellow text-scoutGreen rounded-full flex-shrink-0 flex items-center justify-center text-3xl font-black shadow">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-xl text-scoutYellow">هدف الحركة الكشفية:</h3>
+                            <p class="text-sm leading-relaxed mt-1">
+                                بناء شخصية الشبل ليكون <b>مواطناً صالحاً</b>، نافعاً لنفسه ولمجتمعه، قوي الجسد، متفوقاً في دراسته، ومحباً لمساعدة الآخرين في كل وقت!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 3 Scout Principles Cards -->
+                    <h3 class="font-black text-gray-800 text-lg flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-scoutGreen"></i> المبادئ الأساسية الثلاثة للكشافة:
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Principle 1 -->
+                        <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-300 text-center hover:scale-105 transition transform">
+                            <div class="w-12 h-12 bg-amber-500 text-white rounded-full mx-auto flex items-center justify-center text-xl mb-3 shadow">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h4 class="font-black text-amber-900 mb-1">1. الواجب نحو الله</h4>
+                            <p class="text-xs text-gray-600">الإيمان بالله، أداء العبادات، والتمسك بالأخلاق الفاضلة والصدق.</p>
+                        </div>
+
+                        <!-- Principle 2 -->
+                        <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-300 text-center hover:scale-105 transition transform">
+                            <div class="w-12 h-12 bg-scoutGreen text-white rounded-full mx-auto flex items-center justify-center text-xl mb-3 shadow">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h4 class="font-black text-scoutGreen mb-1">2. الواجب نحو الآخرين</h4>
+                            <p class="text-xs text-gray-600">مساعدة الأهل، طاعة الوالدين، احترام المعلمين، وحماية الوطن والبيئة.</p>
+                        </div>
+
+                        <!-- Principle 3 -->
+                        <div class="bg-blue-50 p-4 rounded-2xl border-2 border-blue-300 text-center hover:scale-105 transition transform">
+                            <div class="w-12 h-12 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center text-xl mb-3 shadow">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <h4 class="font-black text-blue-900 mb-1">3. الواجب نحو الذات</h4>
+                            <p class="text-xs text-gray-600">تطوير النفس، الاهتمام بالصحة، القراءة، والمحافظة على النظافة والشجاعة.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scout Promise Card -->
+                    <div class="bg-amber-100/70 p-5 rounded-2xl border-2 border-amber-300">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-scroll text-2xl text-amber-700"></i>
+                            <h4 class="font-black text-amber-900 text-base">وعد الأشبال (احفظه لتصبح شبلاً حقيقياً):</h4>
+                        </div>
+                        <blockquote class="bg-white p-4 rounded-xl text-center font-black text-scoutGreen text-base md:text-lg border border-amber-200 shadow-sm">
+                            "أعدُ أن أبذل جهدي.. في أن أقوم بواجبي نحو الله ثم الوطن، وأن أساعد الناس في كل وقت، وأن أعمل بقانون الأشبال."
+                        </blockquote>
+                    </div>
+
+                    <!-- Mini Quiz for Station 3 -->
+                    <div class="bg-emerald-100/60 p-5 rounded-2xl border border-emerald-200">
+                        <h4 class="font-bold text-scoutGreen mb-3 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-scoutGreen"></i> اختبار ذكاء الشبل الكشفي:
+                        </h4>
+                        <p class="text-sm font-semibold text-gray-800 mb-3">ما هو شعار مرحلة الأشبال الكشفية؟</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="q3-options">
+                            <button onclick="checkAnswer(3, 'a', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">أ) كن مستعداً</button>
+                            <button onclick="checkAnswer(3, 'b', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ب) أبذل جهدي</button>
+                            <button onclick="checkAnswer(3, 'c', this)" class="q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition">ج) السرعة أولاً</button>
+                        </div>
+                        <div id="q3-feedback" class="mt-3 text-sm font-bold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t">
+                    <button onclick="goToStation(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-2xl transition text-sm">
+                        <i class="fas fa-arrow-right"></i> المحطة السابقة
+                    </button>
+                    <button onclick="goToStation(4)" class="bg-scoutGreen hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm">
+                        المحطة التالية: العاب وتحدي الشبل <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="station-4" class="station-card hidden transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-emerald-600">
+                <div class="bg-gradient-to-r from-scoutGreen to-emerald-700 text-white p-6 relative">
+                    <span class="bg-scoutYellow text-scoutGreen font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">المحطة الرابعة</span>
+                    <h2 class="text-2xl md:text-3xl font-black">لعبة تحدي الشبل: تجهيز حقيبة الكشاف! 🎒</h2>
+                    <p class="text-emerald-100 text-sm mt-1">اختر الأغراض الكشفية المهمة فقط وضَعها في الحقيبة لتكسب وسام المغامر!</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div class="text-center max-w-xl mx-auto">
+                        <p class="text-sm font-bold text-gray-700 mb-2">اضغط على الأغراض الضروية للمخيم الكشفي ليتم وضعها داخل الحقيبة:</p>
+                        <div id="bag-status" class="text-xs font-black text-scoutGreen bg-emerald-100 p-2 rounded-xl inline-block mb-4">
+                            تم جمع: <span id="items-collected-count">0</span> من 4 أغراض كشفية أساسية
+                        </div>
+                    </div>
+
+                    <!-- Items Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <!-- Item 1 (Correct) -->
+                        <div onclick="selectBagItem(this, true, 'بوصلة اتجاهات')" class="bag-item cursor-pointer bg-emerald-50 hover:bg-emerald-100 p-4 rounded-2xl border-2 border-emerald-300 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-emerald-700 mb-2"><i class="fas fa-compass"></i></div>
+                            <span class="font-bold text-xs text-gray-800">بوصلة الكشاف</span>
+                        </div>
+
+                        <!-- Item 2 (Wrong) -->
+                        <div onclick="selectBagItem(this, false, 'جهاز بلايستيشن')" class="bag-item cursor-pointer bg-red-50 hover:bg-red-100 p-4 rounded-2xl border-2 border-red-200 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-red-500 mb-2"><i class="fas fa-gamepad"></i></div>
+                            <span class="font-bold text-xs text-gray-800">ألعاب إلكترونية</span>
+                        </div>
+
+                        <!-- Item 3 (Correct) -->
+                        <div onclick="selectBagItem(this, true, 'مصباح يدوي')" class="bag-item cursor-pointer bg-emerald-50 hover:bg-emerald-100 p-4 rounded-2xl border-2 border-emerald-300 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-amber-500 mb-2"><i class="fas fa-flashlight"></i></div>
+                            <span class="font-bold text-xs text-gray-800">مصباح يدوي</span>
+                        </div>
+
+                        <!-- Item 4 (Correct) -->
+                        <div onclick="selectBagItem(this, true, 'حقيبة إسعافات')" class="bag-item cursor-pointer bg-emerald-50 hover:bg-emerald-100 p-4 rounded-2xl border-2 border-emerald-300 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-red-600 mb-2"><i class="fas fa-kit-medical"></i></div>
+                            <span class="font-bold text-xs text-gray-800">إسعافات أولية</span>
+                        </div>
+
+                        <!-- Item 5 (Wrong) -->
+                        <div onclick="selectBagItem(this, false, 'التلفاز')" class="bag-item cursor-pointer bg-red-50 hover:bg-red-100 p-4 rounded-2xl border-2 border-red-200 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-gray-500 mb-2"><i class="fas fa-tv"></i></div>
+                            <span class="font-bold text-xs text-gray-800">تلفاز كبير</span>
+                        </div>
+
+                        <!-- Item 6 (Correct) -->
+                        <div onclick="selectBagItem(this, true, 'زمزمية ماء')" class="bag-item cursor-pointer bg-emerald-50 hover:bg-emerald-100 p-4 rounded-2xl border-2 border-emerald-300 text-center transition transform hover:-translate-y-1">
+                            <div class="text-4xl text-blue-500 mb-2"><i class="fas fa-bottle-water"></i></div>
+                            <span class="font-bold text-xs text-gray-800">قارورة ماء</span>
+                        </div>
+                    </div>
+
+                    <!-- Feedback message box -->
+                    <div id="game-message" class="text-center font-black p-3 rounded-xl hidden"></div>
+
+                    <!-- Visual Scout Backpack -->
+                    <div class="bg-amber-100/60 p-6 rounded-3xl border-4 border-dashed border-scoutWood text-center max-w-md mx-auto relative overflow-hidden">
+                        <div class="text-6xl text-scoutWood mb-2">
+                            <i class="fas fa-suitcase-rolling"></i>
+                        </div>
+                        <h4 class="font-black text-scoutBrown">حقيبة الشبل الكشفي</h4>
+                        <div id="collected-items-list" class="flex flex-wrap justify-center gap-2 mt-3 text-xs font-bold text-emerald-800">
+                            <span class="text-gray-400">الحقيبة فارغة، ابدأ باختيار الأدوات الصحيحة!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t">
+                    <button onclick="goToStation(3)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-2xl transition text-sm">
+                        <i class="fas fa-arrow-right"></i> المحطة السابقة
+                    </button>
+                    <button onclick="goToStation(5)" class="bg-scoutGreen hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm">
+                        المحطة الأخيرة: معرض الأوسمة والشهادة <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="station-5" class="station-card hidden transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-scoutYellow">
+                <div class="bg-gradient-to-r from-amber-500 via-scoutYellow to-amber-600 text-scoutBrown p-6 text-center relative">
+                    <div class="text-5xl mb-2 text-white drop-shadow">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black">لوحة أوسمة ومكافآت الشبل البطل!</h2>
+                    <p class="text-amber-950 font-bold text-sm mt-1">مبارك! لقد أكملت الرحلة التاريخية للحركة الكشفية بنجاح.</p>
+                </div>
+
+                <div class="p-6 space-y-8">
+
+                    <!-- Badges Earned Gallery -->
+                    <div>
+                        <h3 class="font-black text-lg text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-award text-scoutYellow"></i> الأوسمة الكشفية التي حصلت عليها:
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                            <!-- Badge 1 -->
+                            <div id="badge-card-1" class="bg-gray-100 p-4 rounded-2xl border-2 border-gray-200 text-center opacity-50 transition">
+                                <div class="w-16 h-16 rounded-full bg-amber-400 text-amber-900 mx-auto flex items-center justify-center text-3xl mb-2 shadow">
+                                    <i class="fas fa-monument"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-gray-800">وسام المؤرخ الصغير</h4>
+                                <span class="badge-status text-[10px] font-bold text-gray-500 block mt-1">غير مكتمل</span>
+                            </div>
+
+                            <!-- Badge 2 -->
+                            <div id="badge-card-2" class="bg-gray-100 p-4 rounded-2xl border-2 border-gray-200 text-center opacity-50 transition">
+                                <div class="w-16 h-16 rounded-full bg-emerald-500 text-white mx-auto flex items-center justify-center text-3xl mb-2 shadow">
+                                    <i class="fas fa-paw"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-gray-800">وسام صديق الأشبال</h4>
+                                <span class="badge-status text-[10px] font-bold text-gray-500 block mt-1">غير مكتمل</span>
+                            </div>
+
+                            <!-- Badge 3 -->
+                            <div id="badge-card-3" class="bg-gray-100 p-4 rounded-2xl border-2 border-gray-200 text-center opacity-50 transition">
+                                <div class="w-16 h-16 rounded-full bg-blue-500 text-white mx-auto flex items-center justify-center text-3xl mb-2 shadow">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-gray-800">وسام الوعد والقانون</h4>
+                                <span class="badge-status text-[10px] font-bold text-gray-500 block mt-1">غير مكتمل</span>
+                            </div>
+
+                            <!-- Badge 4 -->
+                            <div id="badge-card-4" class="bg-gray-100 p-4 rounded-2xl border-2 border-gray-200 text-center opacity-50 transition">
+                                <div class="w-16 h-16 rounded-full bg-red-500 text-white mx-auto flex items-center justify-center text-3xl mb-2 shadow">
+                                    <i class="fas fa-compass"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-gray-800">وسام خبير الحقيبة</h4>
+                                <span class="badge-status text-[10px] font-bold text-gray-500 block mt-1">غير مكتمل</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Printable Official Scout Certificate -->
+                    <div id="printable-certificate" class="bg-amber-50 p-6 md:p-8 rounded-3xl border-8 border-double border-scoutGreen text-center relative overflow-hidden shadow-2xl">
+                        <!-- Corner Decorations -->
+                        <div class="absolute top-2 right-2 text-2xl text-scoutYellow"><i class="fas fa-certificate"></i></div>
+                        <div class="absolute top-2 left-2 text-2xl text-scoutYellow"><i class="fas fa-certificate"></i></div>
+                        
+                        <div class="inline-block bg-scoutGreen text-scoutYellow font-black px-6 py-1 rounded-full text-xs mb-3 uppercase tracking-widest">
+                            شهادة إتمام الرحلة الكشفية
+                        </div>
+
+                        <h3 class="text-2xl md:text-3xl font-black text-scoutGreen mb-2">شهادة شبل كشفي متميز</h3>
+                        <p class="text-xs text-gray-600 mb-4 font-bold">تُمنح هذه الشهادة بكل فخر وإعتزاز إلى الشبل البطل:</p>
+
+                        <!-- Scout Name Input or Display -->
+                        <div class="max-w-md mx-auto my-4">
+                            <input type="text" id="cub-name-input" oninput="updateCertificateName()" placeholder="اكتب اسمك الثلاثي هنا يا بطل..." class="w-full text-center text-xl font-black text-scoutBrown bg-white border-2 border-scoutYellow rounded-2xl px-4 py-2 focus:outline-none focus:ring-4 focus:ring-amber-300">
+                        </div>
+
+                        <p class="text-sm text-gray-700 max-w-xl mx-auto leading-relaxed my-3 font-semibold">
+                            لاجتيازه بنجاح رحلة تاريخ الحركة الكشفية، والتعرف على القائد المؤسس <b>بادن باول</b>، ونشأة <b>الأشبال 1916</b>، واستيعاب هدف ومبادئ الكشافة السامية.
+                        </p>
+
+                        <div class="flex justify-around items-center mt-6 pt-4 border-t border-amber-200 text-xs font-bold text-scoutBrown">
+                            <div>
+                                <p class="text-gray-500">التاريخ</p>
+                                <p id="cert-date">13 أغسطس 2026</p>
+                            </div>
+                            <div class="w-16 h-16 bg-scoutYellow rounded-full border-2 border-scoutGreen flex items-center justify-center text-scoutGreen text-2xl shadow-inner">
+                                <i class="fas fa-stamp"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">القائد الكشفي</p>
+                                <p class="font-black text-scoutGreen">مرشد الأشبال الصغير</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificate Action Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="printCertificate()" class="bg-amber-500 hover:bg-amber-600 text-white font-black px-6 py-3 rounded-2xl shadow-lg transition flex items-center gap-2">
+                            <i class="fas fa-print"></i> طباعة الشهادة أو حفظها كـ PDF
+                        </button>
+                        <button onclick="restartJourney()" class="bg-scoutGreen hover:bg-emerald-800 text-white font-black px-6 py-3 rounded-2xl shadow-lg transition flex items-center gap-2">
+                            <i class="fas fa-redo"></i> إعانة الرحلة من جديد
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-scoutGreen text-emerald-100 py-4 text-center text-xs font-bold border-t-4 border-scoutYellow mt-8">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2">
+            <p>⛺ رحلة تاريخ الحركة الكشفية - مصممة خصيصاً لأشبال الغد (7 - 11 سنة)</p>
+            <p class="text-scoutYellow">شعارنا دائماً: "أبذل جهدي!"</p>
+        </div>
+    </footer>
+
+    <script>
+        const state = {
+            currentStation: 1,
+            score: 0,
+            badges: {
+                1: false,
+                2: false,
+                3: false,
+                4: false
+            },
+            quizAnswers: {
+                1: false,
+                2: false,
+                3: false
+            },
+            collectedBagItems: []
+        };
+
+        const totalBagRequired = 4;
+
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.setValueAtTime(130, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'badge') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.6);
+                }
+            } catch (e) {
+                // Audio Context fallback if blocked
+            }
+        }
+
+        function goToStation(stationNumber) {
+            state.currentStation = stationNumber;
+
+            // Hide all station cards
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`station-${i}`).classList.add('hidden');
+                
+                const btn = document.getElementById(`step-btn-${i}`);
+                if (i <= stationNumber) {
+                    btn.className = "relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-scoutGreen text-white ring-4 ring-emerald-200 shadow-md";
+                } else {
+                    btn.className = "relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full font-black text-sm md:text-base flex items-center justify-center transition-all bg-gray-200 text-gray-600 shadow-md";
+                }
+            }
+
+            // Show selected station
+            document.getElementById(`station-${stationNumber}`).classList.remove('hidden');
+
+            // Update Progress Line
+            const progressPercent = ((stationNumber - 1) / 4) * 100;
+            document.getElementById('step-line').style.width = `${progressPercent}%`;
+            document.getElementById('overall-progress').style.width = `${Math.max(20, progressPercent)}%`;
+
+            // Scroll to top smooth
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function checkAnswer(questionNum, answer, btnElement) {
+            if (state.quizAnswers[questionNum]) return; // Answered already
+
+            const correctAnswers = { 1: 'a', 2: 'b', 3: 'b' };
+            const feedbackDiv = document.getElementById(`q${questionNum}-feedback`);
+            const parentDiv = document.getElementById(`q${questionNum}-options`);
+            const buttons = parentDiv.querySelectorAll('button');
+
+            if (answer === correctAnswers[questionNum]) {
+                playSound('success');
+                btnElement.classList.remove('bg-white');
+                btnElement.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                
+                feedbackDiv.textContent = "✨ أحسنت يا بطل! إجابة صحيحة (+50 نقطة)";
+                feedbackDiv.className = "mt-3 text-sm font-bold text-emerald-700 bg-emerald-100 p-2 rounded-xl block";
+                
+                addScore(50);
+                unlockBadge(questionNum); // Unlock corresponding badge
+                state.quizAnswers[questionNum] = true;
+            } else {
+                playSound('error');
+                btnElement.classList.remove('bg-white');
+                btnElement.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                
+                feedbackDiv.textContent = "❌ حاول مرة أخرى يا شبل! فكر جيداً بالمعلومات أعلاه.";
+                feedbackDiv.className = "mt-3 text-sm font-bold text-red-600 bg-red-100 p-2 rounded-xl block";
+            }
+        }
+
+        function selectBagItem(element, isCorrect, itemName) {
+            const messageBox = document.getElementById('game-message');
+
+            if (isCorrect) {
+                if (state.collectedBagItems.includes(itemName)) {
+                    messageBox.textContent = `⚠️ لقد وضعت (${itemName}) في الحقيبة بالفعل!`;
+                    messageBox.className = "text-center font-black p-3 rounded-xl bg-amber-100 text-amber-800 block mb-3";
+                    return;
+                }
+
+                playSound('success');
+                state.collectedBagItems.push(itemName);
+                element.classList.add('ring-4', 'ring-emerald-500', 'opacity-60');
+
+                // Update backpack display
+                const list = document.getElementById('collected-items-list');
+                if (state.collectedBagItems.length === 1) list.innerHTML = ''; // Clear placeholder
+                
+                const itemBadge = document.createElement('span');
+                itemBadge.className = 'bg-scoutGreen text-white px-3 py-1 rounded-full text-xs font-bold shadow animate-bounce';
+                itemBadge.textContent = `✓ ${itemName}`;
+                list.appendChild(itemBadge);
+
+                document.getElementById('items-collected-count').textContent = state.collectedBagItems.length;
+
+                messageBox.textContent = `🎉 ممتاز! تم إضافة (${itemName}) إلى حقيبة الكشاف (+25 نقطة)`;
+                messageBox.className = "text-center font-black p-3 rounded-xl bg-emerald-100 text-emerald-800 block mb-3";
+                addScore(25);
+
+                // Check if bag packing complete
+                if (state.collectedBagItems.length === totalBagRequired) {
+                    unlockBadge(4); // Unlock 4th badge
+                    setTimeout(() => {
+                        messageBox.textContent = "🏆 رائع جداً! أصبحت جاهزاً تماماً للمخيم الكشفي وحصلت على وسام خبير الحقيبة!";
+                        messageBox.className = "text-center font-black p-4 rounded-xl bg-scoutYellow text-scoutBrown text-base block mb-3 shadow-lg border-2 border-scoutGreen";
+                    }, 500);
+                }
+
+            } else {
+                playSound('error');
+                messageBox.textContent = `🛑 الحذر يا شبل! (${itemName}) لا نحتاجه في المخيم الكشفي.`;
+                messageBox.className = "text-center font-black p-3 rounded-xl bg-red-100 text-red-700 block mb-3";
+            }
+        }
+
+        function addScore(points) {
+            state.score += points;
+            document.getElementById('score-display').textContent = state.score;
+        }
+
+        function unlockBadge(badgeNum) {
+            if (state.badges[badgeNum]) return; // Already unlocked
+
+            state.badges[badgeNum] = true;
+            playSound('badge');
+
+            const card = document.getElementById(`badge-card-${badgeNum}`);
+            card.classList.remove('opacity-50', 'bg-gray-100', 'border-gray-200');
+            card.classList.add('bg-amber-50', 'border-scoutYellow', 'badge-glow', 'scale-105');
+
+            const status = card.querySelector('.badge-status');
+            status.textContent = "✨ تم الحصول عليه!";
+            status.className = "badge-status text-[10px] font-black text-scoutGreen block mt-1";
+
+            // Update badge count header
+            const unlockedCount = Object.values(state.badges).filter(Boolean).length;
+            document.getElementById('badges-count-display').textContent = `${unlockedCount} / 4`;
+        }
+
+        function updateCertificateName() {
+            const val = document.getElementById('cub-name-input').value;
+            // Value updates dynamically in certificate input
+        }
+
+        function printCertificate() {
+            const nameInput = document.getElementById('cub-name-input');
+            if (!nameInput.value.trim()) {
+                nameInput.value = "الشبل البطل";
+            }
+            window.print();
+        }
+
+        function restartJourney() {
+            state.score = 0;
+            state.badges = { 1: false, 2: false, 3: false, 4: false };
+            state.quizAnswers = { 1: false, 2: false, 3: false };
+            state.collectedBagItems = [];
+
+            document.getElementById('score-display').textContent = '0';
+            document.getElementById('badges-count-display').textContent = '0 / 4';
+            document.getElementById('items-collected-count').textContent = '0';
+            document.getElementById('collected-items-list').innerHTML = '<span class="text-gray-400">الحقيبة فارغة، ابدأ باختيار الأدوات الصحيحة!</span>';
+
+            // Reset quiz option styles
+            document.querySelectorAll('.q-btn').forEach(btn => {
+                btn.className = "q-btn bg-white hover:bg-emerald-200 p-3 rounded-xl border border-emerald-300 font-bold text-sm transition";
+            });
+
+            document.querySelectorAll('.bag-item').forEach(item => {
+                item.classList.remove('ring-4', 'ring-emerald-500', 'opacity-60');
+            });
+
+            goToStation(1);
+        }
+
+        // Set dynamic date in certificate on load
+        window.onload = function() {
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('cert-date').textContent = today.toLocaleDateString('ar-EG', options);
+        };
+    </script>
+</body>
+</html>
